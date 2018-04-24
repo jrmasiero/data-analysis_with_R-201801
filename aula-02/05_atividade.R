@@ -19,7 +19,7 @@ str(acessos_alunos)
 
 ## Dica: Vimos um exemplo no mesmo material sobre estruturas de dados
 ### # ###
-
+dplyr::glimpse(acessos_alunos)
 length(acessos_alunos)
 
 ### 3 ###
@@ -31,7 +31,7 @@ length(acessos_alunos)
 ## Dica 2: Vimos exemplos disto nos materiais dos tipos numéricos e das estruturas de dados.
 ### # ###
 
-
+paste("O aluno alu201830158 realizou" ,acessos_alunos[3],"acessos" )
 
 ### 4 ###
 ## A operação abaixo cria um vetor com todas as quantidades de acessos por aluno.
@@ -43,19 +43,21 @@ acessos <- unlist(acessos_alunos)
 ## 2. Com uma operação de indexação, crie um outro vetor contendo somente os valores maiores
 ## 3. Determine o tamanho do vetor da operação 2, imprimindo o resultado na Console
 ### # ###
-
-
+quem_olhou_mais <- which(acessos>acessos_alunos[3])
+quem_olhou_menos <- which(acessos<acessos_alunos[3])
+print(quem_olhou_mais)
+length(quem_olhou_mais)
 
 ### 5 ###
 ## Combine todas as etapas acima em uma única chamada, sem a criação dos vetores auxiliares
 ### # ###
 
-
+length(which(acessos>acessos_alunos[3]))
 
 ### 6 ###
 ## Agora determine quantos colegas fizeram menos acessos que você. 
 ## Faça isso utilizando a função sum!
-
+sum(acessos<acessos_alunos[3])
 ## Dica: Lembre que falamos sobre como o R faz conversões implícitas entre o tipo lógico e tipos numéricos
 ### # ###
 
@@ -67,6 +69,15 @@ acessos <- unlist(acessos_alunos)
 ##   - Alunos que acessaram, mas menos que 10 vezes, recebem 1 ponto
 ##   - Alunos que acessaram 10 vezes ou mais recebem 2 pontos
 ## Crie um vetor chamado notas com a nota de cada aluno, na mesma ordem do vetor de acessos criado para o exercício 4.
+
+if(acessos==0) {
+  nota <- 0
+} else if(acessos>0 && acessos<10) {
+  nota <- 1
+} else if(acessos>=10) {
+  nota <- 2
+}
+
 
 ## Dica: Pode ser mais fácil se iniciar o vetor notas como uma cópia do vetor acessos, modificando os valores conforme as regras
 ## OBSERVAÇÃO :: Não avaliarei participação na forma do enunciado deste exercício. 
