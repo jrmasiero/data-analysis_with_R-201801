@@ -6,13 +6,13 @@ load("aula-02/data/dados_exercicio.RData")
 
 ### 1 ####
 ## Inicie mostrando uma prévia do conteúdo da variável acessos_alunos
-## 
+## str(resposta)
 ## Dica 1: No material sobre estruturas de dados vimos como exibir uma prévia do conteúdo de uma variável com 2 funções diferentes
 ## Dica 2: Na primeira aula vimos uma função do RStudio que permite visualizar o conteúdo de uma variável, mas neste caso 
 ##         quero ver uma saída na Console.
 ### # ####
 
-
+str(acessos_alunos)
 
 ### 2 ###
 ## Quantos elementos a variável acessos_alunos possui? Utilize uma função do R que retorna o tamanho da variável.
@@ -20,7 +20,7 @@ load("aula-02/data/dados_exercicio.RData")
 ## Dica: Vimos um exemplo no mesmo material sobre estruturas de dados
 ### # ###
 
-
+length(acessos_alunos)
 
 ### 3 ###
 ## Utilizando o seu código de aluno da Uniritter como nome de um valor da lista, imprima uma linha informando quantos acessos
