@@ -25,7 +25,7 @@
 #' 
 ## ----"Dataset", message=FALSE, warning=FALSE-----------------------------
 library(tidyverse)
-
+library(lubridate)
 salarios <- read_csv("aula-03/data/201802_dados_salarios_servidores.csv.gz")
 
 head(salarios, 20)
@@ -144,19 +144,37 @@ print("Atividade")
 library(tibble)
 library(lubridate)
 ## Modificar o Dataset para criação de nova variável
+## HEAD
  subset_ano <- subset_salarios %>% mutate( AnoIng = year(DATA_DIPLOMA_INGRESSO_SERVICOPUBLICO) )
                             
+
+
+subset_com_ano <- subset_salarios %>%
+  mutate(ano_ingresso = year(DATA_DIPLOMA_INGRESSO_SERVICOPUBLICO)) 
+
+## upstream/master
 ## Determine o tempo médio de trabalho em anos, em nível nacional
+subset_com_ano %>%
+  summarise(tempo_medio = mean(year(today()) - ano_ingresso))
 
  subset_ano %>% summarise(tempo_medio = mean(year(today()) - AnoIng))
 
 ## Determine o tempo médio de trabalho em anos, por UF
+subset_com_ano %>%
+  group_by(UF_EXERCICIO) %>%
+  summarise(tempo_medio = mean(year(today()) - ano_ingresso)) %>%
+  arrange(desc(tempo_medio)) %>% View()
 
  subset_ano %>% group_by(UF_EXERCICIO) %>%
    summarise(tempo_medio = mean(year(today()) - AnoIng)) %>%
    arrange(desc(tempo_medio))
  
 ## Determine a média salarial por ano de ingresso
+subset_com_ano %>%
+  group_by(ano_ingresso) %>%
+  summarise(media_salarial = mean(REMUNERACAO_REAIS)) %>%
+  arrange(desc(media_salarial))
+
 
  subset_ano %>% group_by(DATA_DIPLOMA_INGRESSO_SERVICOPUBLICO) %>%
    summarise(salario_medio = mean(REMUNERACAO_REAIS)) %>%
@@ -208,13 +226,31 @@ subset_salarios %>%
 print("Atividade")
 
 ## Código aqui
-
+ salarios_ok <- subset_ano %>% group_by(UF_EXERCICIO) %>%
+   arrange(desc(REMUNERACAO_REAIS))
+ 
+ 
+ median(salarios_ok$REMUNERACAO_REAIS )
+ 
+ subset_salarios %>%
+   group_by(UF_EXERCICIO) %>%
+   summarise(salario_medio = mean(REMUNERACAO_REAIS), servidores = n(), mediana_salario = median(REMUNERACAO_REAIS),
+             media_maior = salario_medio > mediana_salario) %>%
+   ungroup() %>%
+   arrange(desc(salario_medio)) %>%
+   group_by(media_maior) %>%
+   summarize(total = n())  %>%
+   ungroup()
+   
+   ##count(media_maior)
+ 
+ 
 #' 
 #' __Atividade II__
 #' 
 #' Qual sua justificativa para a quantidade de casos onde a mediana foi maior que a média? Dica: Observe o gráfico que mostra a média e a mediana. Há cauda longa? Em qual direção?
 #' 
-#' ``` SUA RESPOSTA AQUI ```
+#' ``` Presença de outlier que contribuem para que a média ```
 #' 
 #' >> FIM DA ATIVIDADE
 #' 
@@ -299,7 +335,20 @@ subset_salarios %>%
 #' 
 ## ------------------------------------------------------------------------
 print("Atividade")
-
+ 
+ dois_desvios <- 2 * sd(subset_salarios$REMUNERACAO_REAIS)
+ 
+ media <- mean(subset_salarios$REMUNERACAO_REAIS)
+ 
+ 
+ dois_desvios_da_media <- media + dois_desvios
+ 
+ subset_salarios %>%
+   filter(REMUNERACAO_REAIS <= dois_desvios_da_media) %>%
+   nrow() -> total_dentro_de_dois_desvios
+ 
+ total_dentro_de_dois_desvios/nrow(subset_salarios)
+ 
 ## Código aqui
 
 #' 
@@ -309,7 +358,18 @@ print("Atividade")
 #' 
 ## ------------------------------------------------------------------------
 print("Atividade")
-
+ 
+ subset_salarios %>%
+   group_by(DESCRICAO_CARGO) %>%
+   filter(n() >100) %>%
+   summarise(desvio_padrao = sd(REMUNERACAO_REAIS)
+             , media = mean(REMUNERACAO_REAIS)
+             , cv = desvio_padrao/media
+             , qnte_servidores = n()) %>%
+   ungroup()%>%
+ arrange(cv)%>%
+   head(10)
+  
 ## Código aqui
 
 #' 
@@ -321,7 +381,18 @@ print("Atividade")
 print("Atividade")
 
 ## Código aqui
-
+ subset_salarios %>%
+   group_by(DESCRICAO_CARGO) %>%
+   filter(n() >100) %>%
+   summarise(desvio_padrao = sd(REMUNERACAO_REAIS)
+             , media = mean(REMUNERACAO_REAIS)
+             , cv = desvio_padrao/media
+             , qnte_servidores = n()) %>%
+   ungroup()%>%
+   arrange(desc(cv))%>%
+   head(10)
+ 
+ 
 #' 
 #' ![](https://mathwithbaddrawings.files.wordpress.com/2016/07/20160712085402_00021.jpg)
 #' ![](https://mathwithbaddrawings.files.wordpress.com/2016/07/20160712085402_00022.jpg)
