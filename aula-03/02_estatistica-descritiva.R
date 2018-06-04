@@ -152,12 +152,21 @@ library(lubridate)
 subset_com_ano <- subset_salarios %>%
   mutate(ano_ingresso = year(DATA_DIPLOMA_INGRESSO_SERVICOPUBLICO)) 
 
+<<<<<<< HEAD
 ## upstream/master
 ## Determine o tempo médio de trabalho em anos, em nível nacional
 subset_com_ano %>%
   summarise(tempo_medio = mean(year(today()) - ano_ingresso))
 
  subset_ano %>% summarise(tempo_medio = mean(year(today()) - AnoIng))
+=======
+subset_com_ano <- subset_salarios %>%
+  mutate(ano_ingresso = year(DATA_DIPLOMA_INGRESSO_SERVICOPUBLICO)) 
+
+## Determine o tempo médio de trabalho em anos, em nível nacional
+subset_com_ano %>%
+  summarise(tempo_medio = mean(year(today()) - ano_ingresso))
+>>>>>>> upstream/master
 
 ## Determine o tempo médio de trabalho em anos, por UF
 subset_com_ano %>%
@@ -174,6 +183,10 @@ subset_com_ano %>%
   group_by(ano_ingresso) %>%
   summarise(media_salarial = mean(REMUNERACAO_REAIS)) %>%
   arrange(desc(media_salarial))
+<<<<<<< HEAD
+=======
+
+>>>>>>> upstream/master
 
 
  subset_ano %>% group_by(DATA_DIPLOMA_INGRESSO_SERVICOPUBLICO) %>%
