@@ -2,8 +2,11 @@
 
 ## Vamos começar carregando o arquivo de dados preparado para esta aula
 library(tidyverse)
-
+library(lubridate)
+library(compare)
 salarios <- read_csv("aula-03/data/201802_dados_salarios_servidores.csv.gz")
+
+print(salarios)
 
 ### 1 ####
 ## 
@@ -13,7 +16,20 @@ salarios <- read_csv("aula-03/data/201802_dados_salarios_servidores.csv.gz")
 ## Após criar esta coluna, descarte todos os registros cuja Remuneração Final for menor que R$ 900,00
 ## 
 ### # ####
+##cotação dolar 28/02/2018 = 3,2421
 
+salarios %>% 
+  select(REMUNERACAO_REAIS,REMUNERACAO_DOLARES) %>%
+  mutate( REMUNERACAO_DOLARES = REMUNERACAO_DOLARES * 3.2 ) %>%
+  mutate(soma_real_dolar = REMUNERACAO_REAIS + REMUNERACAO_DOLARES ) %>%
+  select(soma_real_dolar) %>%
+  filter(soma_real_dolar > 900) %>%
+  arrange(soma_real_dolar)
+
+
+
+  
+  
 
 ### 2 ####
 ## 
@@ -23,6 +39,22 @@ salarios <- read_csv("aula-03/data/201802_dados_salarios_servidores.csv.gz")
 ## 
 ## Dica: a função pull() do dplyr extrai uma variável em formato de vetor.
 salarios %>% count(UF_EXERCICIO) %>% pull(UF_EXERCICIO) -> ufs # EXEMPLO
+
+salarios %>% 
+  select(DESCRICAO_CARGO ,ORGSUP_LOTACAO,ORGSUP_EXERCICIO)%>%
+  filter(ORGSUP_LOTACAO != ORGSUP_EXERCICIO) -> diferente
+
+diferente %>%
+  group_by(DESCRICAO_CARGO)%>%
+  count(DESCRICAO_CARGO) %>%
+  arrange(desc(n)) %>%
+  head(5) %>%
+  pull(DESCRICAO_CARGO) -> cargos_diferente_lotacao
+
+print(cargos_diferente_lotacao)
+  
+  
+
 ## 
 ### # ####
 
@@ -41,11 +73,49 @@ salarios %>% count(UF_EXERCICIO) %>% pull(UF_EXERCICIO) -> ufs # EXEMPLO
 ##    - o menor salário
 ##    - o maior salário
 ## Analise os valores por lotação dentro de um mesmo cargo e comente ao final do exercício se você considera alguma diferença significativa.
+
+##Percebi somente uma diferença significativa no valor do desvio_padrao dos grupos, mas sei constatar se é significativa.
+
 ## 
 ## Dica 1: o operador %in% testa se valores de uma variável pertencem ao conjunto de valores de um vetor. Lembre que deve ser utilizada a variável cargos_diferente_lotacao
 salarios %>% filter(DESCRICAO_CARGO %in% c("MINISTRO DE PRIMEIRA CLASSE", "ANALISTA DE TEC DA INFORMACAO", "PESQUISADOR")) %>% count(DESCRICAO_CARGO) # EXEMPLO
 ## Dica 2: Será necessário agrupar (group_by) por mais de uma variável para calcular as estatísticas solicitadas. 
 ## A função group_by permite múltiplos nomes de variáveis na mesma chamada.
 ## 
+
+salarios %>% 
+  filter(DESCRICAO_CARGO %in% c(cargos_diferente_lotacao)) %>%
+  filter(ORGSUP_LOTACAO != ORGSUP_EXERCICIO) -> Servidores_Cargos_dif
+
+salarios %>% 
+  filter(DESCRICAO_CARGO %in% c(cargos_diferente_lotacao)) %>%
+  filter(ORGSUP_LOTACAO == ORGSUP_EXERCICIO) -> Servidores_Cargos_sem
+
+Servidores_Cargos_dif%>%
+  group_by(DESCRICAO_CARGO)%>%
+  summarise(media_salarial = mean(REMUNERACAO_REAIS), 
+            desvio_padrao = sd(REMUNERACAO_REAIS), 
+            mediana = median(REMUNERACAO_REAIS ),
+            desv_ab_med = median( abs(REMUNERACAO_REAIS - median(REMUNERACAO_REAIS ))),
+            menor_salario = min(REMUNERACAO_REAIS),
+            maior_salario = max(REMUNERACAO_REAIS))
+
+Servidores_Cargos_sem%>%
+  group_by(DESCRICAO_CARGO)%>%
+  summarise(media_salarial = mean(REMUNERACAO_REAIS), 
+            desvio_padrao = sd(REMUNERACAO_REAIS), 
+            mediana = median(REMUNERACAO_REAIS ),
+            desv_ab_med = median( abs(REMUNERACAO_REAIS - median(REMUNERACAO_REAIS ))),
+            menor_salario = min(REMUNERACAO_REAIS),
+            maior_salario = max(REMUNERACAO_REAIS))
+
+
+
+
+  
+  
+  
+
+
 ### # ####
 
