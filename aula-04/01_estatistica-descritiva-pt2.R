@@ -42,7 +42,7 @@ options(encoding = "UTF-8")
 #' 
 ## ----"Dataset", message=FALSE, warning=FALSE-----------------------------
 library(tidyverse)
-
+library(lubridate)
 subset_salarios <- read_csv("aula-04/data/201802_dados_salarios_servidores.csv.gz") %>%
   filter(REMUNERACAO_REAIS > 900, !is.na(UF_EXERCICIO)) %>%
   select(ID_SERVIDOR_PORTAL, REMUNERACAO_REAIS, DESCRICAO_CARGO, DATA_INGRESSO_ORGAO, ORGSUP_EXERCICIO, DATA_DIPLOMA_INGRESSO_SERVICOPUBLICO, UF_EXERCICIO)

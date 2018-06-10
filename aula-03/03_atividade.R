@@ -3,7 +3,7 @@
 ## Vamos começar carregando o arquivo de dados preparado para esta aula
 library(tidyverse)
 library(lubridate)
-library(compare)
+
 salarios <- read_csv("aula-03/data/201802_dados_salarios_servidores.csv.gz")
 
 print(salarios)
