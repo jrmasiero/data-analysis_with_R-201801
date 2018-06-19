@@ -169,5 +169,6 @@ ted_talks %>%
   filter( between( ano_publicacao, 2012, 2017 )) %>%
   ggplot( aes(x = views)) +
   geom_histogram( bins = 1000 ) +
+  scale_x_continuous(labels = scales::comma_format()) +
   facet_wrap( ~ ano_publicacao, ncol = 3 ) +
   theme_bw()
