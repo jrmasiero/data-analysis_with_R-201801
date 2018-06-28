@@ -190,33 +190,113 @@ pedidos_nos_10_mais%>%
 
 #13 # Identifique, por usuário, o tempo médio entre pedidos
   
-  
+  lista_completa_temp %>%
+    select(user_id,days_since_prior_order)%>%
+    group_by(user_id)%>%
+    summarise(tm_entre_pedidos = mean(days_since_prior_order)) ->tempo_m_usuario
 
 
 #14 # Faça um gráfico de barras com a quantidade de usuários em cada tempo médio calculado
+tempo_m_usuario %>%
+  group_by(tm_entre_pedidos) %>%
+  summarise(qtde = n()) -> tempo_m_usuario_pgrafico
+
+tempo_m_usuario_pgrafico%>%
+  ggplot( aes(x = tm_entre_pedidos, y = qtde)) +
+  geom_col() +
+  theme_minimal()
 
 
 #15 # Faça um gráfico de barras com a quantidade de usuários em cada número de dias desde o pedido anterior. Há alguma similaridade entre os gráficos das atividades 14 e 15? 
+lista_completa_temp %>%
+  select(user_id,days_since_prior_order)%>%
+  group_by(days_since_prior_order)%>%
+  summarise(qtde = n()) -> usuario_pordia_pgrafico
+
+usuario_pordia_pgrafico%>%
+  ggplot( aes(x = days_since_prior_order, y = qtde)) +
+  geom_col() +
+  theme_minimal()
+
+#Resposta: Sim, são muito similares, quase iguais.
 
 
 #16 # Repita o gráfico da atividade 14 mantendo somente os usuários com no mínimo 5 pedidos. O padrão se mantém?
+lista_completa_temp %>%
+  select(user_id,days_since_prior_order)%>%
+  group_by(user_id)%>%
+  summarise(tm_entre_pedidos = mean(days_since_prior_order)
+                               ,qtde = n())%>%
+  filter(qtde>=5) -> usuario_5mais_pedidos
+
+usuario_5mais_pedidos %>%
+  group_by(tm_entre_pedidos) %>%
+  summarise(numero = n()) -> usuario_dia_pgrafico
+
+usuario_dia_pgrafico%>%
+  ggplot( aes(x = tm_entre_pedidos, y = numero)) +
+  geom_col() +
+  theme_minimal()
+
+#Resposta: SIM, o padrão se mantem.
 
 
 #17 # O vetor abaixo lista todos os IDs de bananas maduras em seu estado natural.
     # Utilizando este vetor, identifique se existem pedidos com mais de um tipo de banana no mesmo pedido.
-
+    bananas <- c(24852, 13176, 39276, 37067, 29259)
+    
+    lista_completa_temp %>%
+      select(order_id,product_id)%>%
+      filter(product_id %in% bananas)%>%
+      group_by(order_id)%>%
+      summarise(tipos_de_banana = n())%>%
+      filter(tipos_de_banana>1) %>%
+      pull(order_id) -> pedidos_duas_bananas
+    
 
 #18 # Se existirem, pedidos resultantes da atividade 17, conte quantas vezes cada tipo de banana aparece nestes pedidos com mais de um tipo de banana.
     # Após exibir os tipos de banana, crie um novo vetor de id de bananas contendo somente os 3 produtos de maior contagem de ocorrências
-
+    lista_completa_temp %>%
+      select(order_id,product_id)%>%
+      filter(product_id %in% bananas)%>%
+      filter(order_id %in% pedidos_duas_bananas)%>%
+      group_by(product_id)%>%
+      summarise(tipo_banana_ocorrencia = n())%>%
+      arrange(desc(tipo_banana_ocorrencia))%>%
+      head(3) %>%
+      pull(product_id)-> bananas_mais_vendidas
+      
+      
 
 #19 # Com base no vetor criado na atividade 18, conte quantos pedidos de, em média, são feitos por hora em cada dia da semana. 
 
+    lista_completa_temp %>%
+      select(product_id,order_dow,order_hour_of_day)%>%
+      filter(product_id %in% bananas_mais_vendidas)%>%
+      group_by(order_dow,order_hour_of_day)%>%
+      summarise(qnte = n())%>%
+      group_by(order_dow)%>%
+      summarise(venda_por_hora = mean(qnte)) -> media_venda_dia
+    
 
 #20 # Faça um gráfico dos pedidos de banana da atividade 19. O gráfico deve ter o dia da semana no eixo X, a hora do dia no eixo Y, 
     # e pontos na intersecção dos eixos, onde o tamanho do ponto é determinado pela quantidade média de pedidos de banana 
     # nesta combinação de dia da semana com hora
+    
+    lista_completa_temp %>%
+      select(product_id,order_dow,order_hour_of_day)%>%
+      filter(product_id %in% bananas_mais_vendidas)%>%
+      group_by(order_dow,order_hour_of_day)%>%
+      summarise(qnte = n()) -> dia_hora_qnt
 
+    
+    dia_hora_qnt%>%
+      ggplot( aes(x = order_dow, y = order_hour_of_day, size = dia_hora_qnt$qnte)) +
+      scale_size(range = c(0, 5)) +
+      geom_point(color = "blue") +
+      theme_minimal()
+    
+  
 
 #21 # Faça um histograma da quantidade média calculada na atividade 19, facetado por dia da semana
 
