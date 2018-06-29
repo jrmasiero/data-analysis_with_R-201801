@@ -299,7 +299,24 @@ usuario_dia_pgrafico%>%
   
 
 #21 # Faça um histograma da quantidade média calculada na atividade 19, facetado por dia da semana
-
+    lista_completa_temp %>%
+      select(product_id,order_dow,order_hour_of_day)%>%
+      filter(product_id %in% bananas_mais_vendidas)%>%
+      group_by(order_dow,order_hour_of_day)%>%
+      summarise(qnte = n()) -> dia_hora_qnt_ex21
+    
+    dia_hora_qnt_ex21%>%
+      ggplot(aes( x = dia_hora_qnt_ex21$order_hour_of_day, y = dia_hora_qnt_ex21$qnte )) +
+      geom_col( alpha=0.6 ) +
+      facet_wrap (~ dia_hora_qnt_ex21$order_dow, ncol = 3 ) +
+      labs( x = "SEMANA"
+            , y = "Total de vendas"
+            , fill = "Dias da Semana"
+            , title = "Vendas por dia em cada hora" ) +
+      theme_bw()
+    
+    
 
 #22 # Teste se há diferença nas vendas por hora entre os dias 3 e 4 usando o teste de wilcoxon e utilizando a simulação da aula de testes
 
+    

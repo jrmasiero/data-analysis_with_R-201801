@@ -26,6 +26,7 @@ sd_anac_idade <- 12
 pnorm( mean = media_anac_idade, sd = sd_anac_idade, q = 60, lower.tail = FALSE )
 pnorm( mean = media_anac_idade, sd = sd_anac_idade, q = 20, lower.tail = TRUE  )
 
+
 # 1.65 * sd_anac_idade ~~ 95%
 
 
