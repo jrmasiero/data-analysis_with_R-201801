@@ -318,5 +318,7 @@ usuario_dia_pgrafico%>%
     
 
 #22 # Teste se há diferença nas vendas por hora entre os dias 3 e 4 usando o teste de wilcoxon e utilizando a simulação da aula de testes
-
+    dia_hora_qnt_ex21%>%
+      filter(order_dow >= 3 & order_dow<= 4) -> dia_tres_quarto
     
+    wilcox.test(dia_tres_quarto$qnte ~ dia_tres_quarto$order_dow, data = dia_tres_quarto, alternative = "two.sided", conf.int = TRUE)
